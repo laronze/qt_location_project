@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QPixmap>
 #include <QGeoLocation>
+#include <QGeoCodingManager>
 
 
 int main(int argc, char *argv[])

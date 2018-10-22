@@ -10,7 +10,7 @@ Window {
 
     PositionSource {
         id: src
-        updateInterval: 1000
+        updateInterval: 10000
         active: true
 
         onPositionChanged: {
@@ -18,6 +18,8 @@ Window {
             console.log("Coordinate:", coord.longitude, coord.latitude);
             map.center = coord;
             me.coordinate = coord;
+
+            /*var jamkPlace = GeocodeModel.query = "Piippukatu 2, 40100 Jyväskylä, Finland"*/
         }
     }
 
@@ -27,15 +29,18 @@ Window {
         preferred: ["osm"]
     }
 
+
     Map {
         id: map
         anchors.fill: parent
         plugin: osmPlugin
         zoomLevel: 15
 
+
+
        MapQuickItem {
-            id: marker
-            coordinate:  QtPositioning.coordinate(62.241857, 25.759745) // jamk
+            id: jamk
+
             anchorPoint.x: image.width/2
             anchorPoint.y: image.height
             sourceItem: Image {
@@ -45,6 +50,17 @@ Window {
 
             }
         }
+       MapItemView {
+       model: routeModel
+       delegate: Component {
+           MapRoute {
+               route: routeData
+               line.color: "blue"
+               line.width: 4
+                }
+             }
+       }
+
        MapQuickItem {
             id: me
             coordinate:  PositionSource.position.coordinate
@@ -56,17 +72,32 @@ Window {
                 source: "images/crabik.png"
             }
         }
-       MapPolyline {
-               line.width: 10
-               line.color: 'green'
-               path: [
-                   { latitude: -27, longitude: 153.0 },
-                   { latitude: -27, longitude: 154.1 },
-                   { latitude: -28, longitude: 153.5 },
-                   { latitude: -29, longitude: 153.5 }
-               ]
+      GeocodeModel {
+           plugin: map.plugin
+           query: " Piippukatu 2, Jyväskylä"
+           onLocationsChanged:
+            {
+                if (count) {
+                    jamk.coordinate = get(0).coordinate
+                    console.log("Coordinate jamk :",  jamk.coordinate);
+                }
+            }
+           Component.onCompleted: update()
+       }
+       RouteModel {
+            id: routeModel
+            plugin: map.plugin
+            query: RouteQuery {id: routeQuery}
+            Component.onCompleted: {
+                routeQuery.addWaypoint(QtPositioning.coordinate(62.221052, 25.704212));
+                routeQuery.addWaypoint(QtPositioning.coordinate(62.241623, 25.758852));
+                update();
+            }
+
+       }
+
     }
 
-}
+
 
 }

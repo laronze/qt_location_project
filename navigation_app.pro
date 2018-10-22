@@ -13,7 +13,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        main.cpp
+        main.cpp \
 
 RESOURCES += qml.qrc
 
@@ -28,3 +28,11 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 QT += positioning
+QT += location
+
+contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
+    ANDROID_EXTRA_LIBS = \
+        C:/Projects/projects_qt/navigation_app/../../../Users/Meincrab/Downloads/android_openssl/Android/armeabi-v7a/libcrypto.so \
+        $$PWD/../../../Users/Meincrab/Downloads/android_openssl/Android/armeabi-v7a/libssl.so
+}
+
